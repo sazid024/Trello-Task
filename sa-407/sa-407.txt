@@ -1,8 +1,32 @@
 1. SELECT employee.Employee_Id, employee.Employee_name, employee.Salary, employee.Department_id, department.Department_name FROM employee Left JOIN department ON employee.Department_id = department.Department_id; 
-2. SELECT e1.Employee_Id, e1.Employee_name, e1.Salary FROM employee e1 JOIN employee e2 ON e1.Salary > e2.Salary WHERE e1.Employee_Id <> e2.Employee_Id GROUP BY e1.Employee_Id, e1.Employee_name, e1.Salary;
+
+2. SELECT e1.Employee_Id, e1.Employee_name, e1.Salary
+FROM employee e1
+WHERE e1.Salary > (SELECT MAX(e2.Salary) 
+                   FROM employee e2 
+                   WHERE e2.Department_Id = e1.Department_Id 
+                   AND e2.Employee_Id <> e1.Employee_Id);
+
 3. SELECT employee.Employee_Id, employee.Employee_name, employee.Salary FROM employee JOIN department ON employee.Department_id = department.Department_id WHERE Department_name NOT IN ('Sales', 'IT');
+
 4. SELECT department.Department_id, department.Department_name, AVG(Salary) FROM employee JOIN department ON employee.Department_id = department.Department_id GROUP BY department.Department_id, department.Department_name HAVING AVG(employee.Salary) > 60000;
+
 5. SELECT employee.Employee_name, department.Department_name, project.Project_name FROM employee JOIN department on employee.Department_id = department.Department_id JOIN project ON employee.Employee_Id = project.Employee_id;
-6. 
+
+6. SELECT e.employee_name, d.department_name, p.project_name, SUM(e.salary) AS total_salary
+FROM employee e
+JOIN department d ON e.department_id = d.department_id
+JOIN project p ON e.employee_id = p.employee_id
+GROUP BY e.employee_id, e.employee_name, d.department_name, p.project_name
+HAVING COUNT(p.project_id) > 1;
+
 7. SELECT employee.Employee_name, employee.Department_id FROM employee LEFT JOIN project ON employee.Employee_Id = project.Employee_id WHERE project.Project_id IS NULL;
-8. 
+
+8. SELECT e.employee_name, e.salary, d.department_name
+FROM employee e
+JOIN department d ON e.department_id = d.department_id
+WHERE e.salary > (
+    SELECT AVG(e2.salary)
+    FROM employee e2
+    WHERE e2.department_id = e.department_id
+);
